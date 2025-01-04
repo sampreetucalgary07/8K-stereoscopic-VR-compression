@@ -1,3 +1,4 @@
+## Code reference from : https://github.com/explainingai-code/VAE-Pytorch/tree/main/model
 import torch
 import torch.nn as nn
 import sys

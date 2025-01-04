@@ -6,6 +6,7 @@ import os
 sys.path.append(os.path.dirname(__file__))
 from model_blocks import DownBlock, UpBlock
 
+## Code reference from : https://github.com/explainingai-code/VAE-Pytorch/tree/main/model
 
 ######################## VAE ########################
 
