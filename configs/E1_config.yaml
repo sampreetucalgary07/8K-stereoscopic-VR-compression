@@ -1,0 +1,107 @@
+# this file contains the parameters related to the experiment E1
+# add relative path to the VAE_analysis folder
+default_params:
+  base_path: "/home/ubuntu/personal/VAE_Analysis/"
+
+video_process_params:
+  video_path: "data/Videos/people_low_out_night_1.avi"
+  output_folder: "data/video_dataset/people_low_out_night_1/"
+  trim_start: 0
+  trim_end: 10
+  frame_format: ".png"
+  L_R_folder_name: "L_R_frames"
+
+dataset_params:
+  L_R_frames_path: "data/video_dataset/people_low_out_night_1/L_R_frames"
+  train_ratio: 0.8 # 80% of the data is used for training . 20% for testing
+  output_folder: "data/video_dataset/people_low_out_night_1/"
+  img_format: ".png"
+  num_frames_ratio: -0.5 # -0.5 means all frames
+  seperate_L_R: False
+
+patch_params:
+  input_dataset: "data/video_dataset/people_low_out_night_1/train_frames"
+  output_folder: "data/video_dataset/people_low_out_night_1/"
+  img_dim_H: 1080
+  img_dim_W: 1920
+  downsample_factor: 5
+  num_frames: -1
+
+filter_patch_params:
+  input_dataset: "data/UCF101/UCF-101-frames/"
+  output_folder: "data/UCF101/UCF-101-frames/"
+  output_folder_name: "filtered"
+  patch_format: ".png"
+  ssim_threshold: 0.9
+  sample_factor: 5
+  filter_type: "ssim" #ssim or sample or both
+
+dataLoader_params:
+  dataset_path: "data/video_dataset/people_low_out_night_1/train_frames_patches"
+  start_frame_num: 0
+  end_frame_num: -1 #-1 means all frames
+  batch_size: 1
+  shuffle: False
+  channel_last: False
+  img_channels: 3
+
+model_params:
+  z_channels: 3
+  down_channels: [128, 256, 512, 512] #2x4 x reduction
+  down_sample: [True, True, True]
+  attn_down: [False, False, False]
+  norm_channels: 32
+  num_down_layers: 2
+  num_up_layers: 2
+
+training_params:
+  seed: 1111
+  model_retrain: False
+  model_retrain_path: "data/video_dataset/people_low_out_night_1/trained_models/E1_model.pth"
+  task_name: "E1"
+  device: "cuda"
+  disc_start: 40000
+  disc_weight: 0.5
+  commitment_beta: 0.2
+  perceptual_weight: 1
+  num_epochs: 15
+  num_samples: 1
+  num_grid_rows: 1
+  lr: 0.00001
+  acc_steps: 4
+  img_save_steps: 64
+  save_model_start: 3
+  save_img_path: "users/"
+  save_model_path: "data/video_dataset/people_low_out_night_1/trained_models/"
+  save_model_name: "E1_model_2" # Don't add .pt or .pth
+  save_pth: True
+  save_csv_path: "data/video_dataset/people_low_out_night_1/logs/E1_raw_2.csv"
+
+latent_params:
+  frame_path: "data/video_dataset/people_low_out_night_1/train_frames"
+  model_path: "data/video_dataset/people_low_out_night_1/trained_models/E1_model.pth"
+  is_model_pth: True
+  device: "cuda"
+  img_dim_H: 1080
+  img_dim_W: 1920
+  downsample_factor: 5
+  save_latent_path: "data/video_dataset/people_low_out_night_1/latents/"
+  is_upsample: False # If False, downsample would be used
+  factor: 8 #Downsample or upsample factor
+  num_frames: -1 # -1 means all frames
+  img_format: ".png"
+  tensors_png_path: "data/video_dataset/people_low_out_night_1/latents/"
+  tensors_png_folder_name: "latents_tensors_png"
+
+reconstruction_params:
+  latents_as_img_path: "data/video_dataset/people_low_out_night_1/latents/latents_tensors_png"
+  output_folder: "data/video_dataset/people_low_out_night_1/reconstructed_frames"
+  img_format: ".png"
+  model_path: "data/video_dataset/people_low_out_night_1/trained_models/E1_model.pth"
+  is_model_pth: True
+  device: "cuda"
+  latent_dim_H: 135
+  latent_dim_W: 240
+  upsample_factor: 5
+  num_frames: 10 #-1 means all frames
+  factor: 8 #Downsample or upsample factor

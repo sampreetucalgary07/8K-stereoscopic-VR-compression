@@ -1,0 +1,296 @@
+# this file contains the parameters related to the experiment E1
+# add relative path to the VAE_analysis folder
+default_params:
+  base_path: /home/ubuntu/personal
+
+video_process_params:
+  video_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/recon_video/E2_orig_120_c_17_libx265_yuv420p.mp4
+  output_folder: 
+    VAE_Analysis/data/video_dataset/8K_basketball/reconstructed_frames/libx265_c_17_yuv420p_raw
+  top_down_video: true # If True, top_down video would be used
+  trim: false # If True, trim_start and trim_end would be used
+  trim_start: 0
+  trim_end: 10
+  frame_format: .png
+  L_R_folder_name: T_B_frames
+  num_frames: # None means all frames
+  - 0
+  - 150
+  is_latent_video: false
+dataset_params:
+  L_R_frames_path: VAE_Analysis/data/video_dataset/8K_basketball/T_B_frames
+  train_ratio: 0.8 # 80% of the data is used for training . 20% for testing
+  output_folder: VAE_Analysis/data/video_dataset/8K_basketball
+  img_format: .png
+  num_frames_ratio: -0.5 # -0.5 means all frames
+  seperate_L_R: false
+
+patch_params:
+  input_dataset: VAE_Analysis/data/video_dataset/8K_basketball/train_frames
+  output_folder_name: train_frames_patches_40
+  output_folder_path: VAE_Analysis/data/video_dataset/8K_basketball/patches
+  img_dim_H: 3840 #1080
+  img_dim_W: 7680 #1920
+  downsample_factor: 40 #5
+  num_frames:
+  - 
+  - 120
+  device: cuda
+
+filter_patch_params:
+  input_folder: VAE_Analysis/data/video_dataset/8K_basketball/patches/train_frames_patches_40
+  output_folder: VAE_Analysis/data/video_dataset/8K_basketball/filtered_patches
+  output_folder_name: filtered_40
+  num_patches: 1600
+  patch_format: .png
+  ssim_threshold: 0.92
+  sample_factor: 5
+  filter_type: both #ssim or sample or both
+  inter_filter: true
+  inter_ssim_threshold: 0.97
+  inter_sample_factor: 1
+
+dataLoader_params:
+  dataset_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/filtered_f_ptchs/inter_patch_filter
+  start_frame_num: 0
+  end_frame_num: #-1 means all frames
+  batch_size: 1
+  shuffle: true
+  channel_last: false
+  img_channels: 3
+
+model_params:
+  z_channels: 3
+  down_channels: #2x4 x reduction
+  - 128
+  - 256
+  - 512
+  - 512
+  down_sample:
+  - true
+  - true
+  - true
+  attn_down:
+  - false
+  - false
+  - false
+  norm_channels: 32
+  num_down_layers: 2
+  num_up_layers: 2
+
+# train_vae_model_5.py
+training_params:
+  device: cuda
+  disc_start: 0
+  disc_weight: 0.5
+  commitment_beta: 0.2
+  perceptual_weight: 1
+  num_epochs: 15
+  gen_lr: 0.000001
+  disc_lr: 0.000001
+  acc_steps: 4
+  save_model: true
+  save_model_start: 1
+  save_model_path: VAE_Analysis/data/video_dataset/8K_basketball/trained_models
+  save_model_name: E2_model_dis # Don't add .pt or .pth
+  save_model_as_pth: true
+  save_csv_path: VAE_Analysis/data/video_dataset/8K_basketball/logs/E2_raw_dis.csv #NOT USED in TL
+
+retrain_params:
+  existing_model_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/trained_models/mE2_tE2_ds_40_retrain.pth
+  log_path: VAE_Analysis/data/video_dataset/8K_basketball/logs/mE2_tE2_ds_40.csv
+  retrain_epochs: 15
+  save_model_path: VAE_Analysis/data/video_dataset/8K_basketball/trained_models
+  save_model_name: mE2_tE2_ds_40_retrain # Don't add .pt or .pth
+  save_as_pth: true
+
+  copy_model: true
+  model_copy_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/trained_models/mE2_tE2_ds_40_r2.pth
+  save_model_as_pth: true
+latent_params:
+  frame_path: VAE_Analysis/data/video_dataset/8K_basketball/train_frames
+  model_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/trained_models/mE2_tE2_ds_40_r2.pth
+  is_model_pth: true
+  device: cuda
+  img_dim_H: 3840 #1080
+  img_dim_W: 7680
+  downsample_factor: 40
+  save_latent_path: VAE_Analysis/data/video_dataset/8K_basketball/latents
+  save_latent_folder_name: latent_tensor_ds_40_train_120_e45
+  is_upsample: false # If False, downsample would be used
+  factor: 8 #Downsample or upsample factor
+  num_frames: #2 seconds 30fps
+  - 
+  - 
+  img_format: .png
+  tensors_png_path: VAE_Analysis/data/video_dataset/8K_basketball/latents
+  tensors_png_folder_name: latent_png_ds_40_train_120_e45
+
+reconstruction_params:
+  latents_as_img_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/latents/latent_png_ds_40_train_120_e45
+  output_folder: VAE_Analysis/data/video_dataset/8K_basketball/reconstructed_frames
+  save_folder_name_raw_tensors: raw_latent_frames_ds_40_train_120_e45
+  save_folder_name_raw_frames: raw_frames_ds_40_train_120_e45
+  img_format: .png
+  model_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/trained_models/mE2_tE2_ds_40_r2.pth
+  is_model_pth: true
+  device: cuda
+  latent_dim_H: 480
+  latent_dim_W: 960
+  upsample_factor: 40
+  num_frames: #-1 means all frames
+  - 
+  - 
+  factor: 8 #Downsample or upsample factor
+  latent_min_max_csv_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/latents/latent_png_ds_40_train_120_e45/min_max_values.csv
+  save_folder_name: raw_frames_from_ReconImg
+
+#evaluation_8.py
+evaluation_params:
+  true_frames_path: VAE_Analysis/data/video_dataset/8K_basketball/train_frames
+  recon_frames_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/reconstructed_frames/libx265_c_17_yuv420p_raw/T_B_frames
+  result_json_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/logs/eval_ds_libx265_c_17_yuv420p_lpips.json
+  metrics: # options : ["ssim", "psnr", "lpips"]
+  - lpips
+  img_format: .png
+  num_frames: #null means all frames in pred folder
+  device: cuda
+  img_dim_H: 3840 #1080
+  img_dim_W: 7680
+  downsample_factor: 40
+  overwrite_prev_json: true
+  patch_wise: true
+
+#frame_merging_8.py
+merge_frame_params:
+  frames_path: VAE_Analysis/data/video_dataset/8K_basketball/latents/latents_tensors_png
+  is_same_folder: true # if true, names should be saved with only "L"/"T" and "R"/"B" difference
+  is_diff_folder: false # if true, "R"/"B" frames are saved in different folders
+  is_top_down: true
+  diff_folder_path: VAE_Analysis/data/video_dataset/8K_basketball/L_R_frames
+  output_folder: VAE_Analysis/data/video_dataset/8K_basketball/latents
+  output_folder_name: merged_LR_frames
+  num_frames: [null, null] #null means all frames
+  img_format: .png
+
+# save_video_9.py
+save_video_params:
+  is_latent: false
+  frames_path: VAE_Analysis/data/video_dataset/8K_basketball/frames
+  output_folder_path: VAE_Analysis/data/video_dataset/8K_basketball/recon_video
+  output_video_name: E2_orig_120_c_30_libx264_yuv420p
+  video_ext: .mp4
+  in_fps: 30
+  out_fps: 30
+  video_codec: libx264
+  pixel_format: yuv420p
+  img_format: .png
+  num_frames: # None means all frames
+  - 
+  - 120
+  crf_value: 30
+  audio_codec:
+  audio_file_path:
+  overwrite_prev_video: true
+
+# parse_csv_10.py
+parse_csv_params:
+  heatmaps:
+    if_save: false
+    csv_path: VAE_Analysis/data/video_dataset/8K_basketball/logs/eval_ds_40_train_lpips.json
+    output_folder: VAE_Analysis/data/video_dataset/8K_basketball/res_plots/heatmap_lpips_40
+    num_frames: [null, 1] #null means all frames
+    downsample_factor: 40
+    save_format: .jpg
+    metric: lpips #,options : "ssim", "psnr", "lpips"
+  model_losses:
+    if_save: false
+    csv_path: VAE_Analysis/data/video_dataset/8K_basketball/logs/E2_raw.csv
+    output_folder: VAE_Analysis/data/video_dataset/8K_basketball/res_plots/losses
+    output_name: E2_losses.jpg
+  plot_frame_wise_loss:
+    if_save: false
+    csv_path: VAE_Analysis/data/video_dataset/8K_basketball/logs/E2_eval_patch_ssim.csv
+    output_folder: VAE_Analysis/data/video_dataset/8K_basketball/res_plots/losses
+    output_name: E2_train_test_ssim.jpg
+    num_train_frames: 48 # No. of frames in training data
+    downsample_factor: 20
+    metric: ssim #,options : "ssim", "psnr", "lpips"
+    is_top_down: true
+    img_format: .png
+  overall_avg_metrics:
+    if_print: true
+    csv_path: 
+      VAE_Analysis/data/video_dataset/8K_basketball/logs/eval_ds_libx265_c_17_yuv420p_lpips.json
+    metric_list: # options : ["ssim", "psnr", "lpips"]
+    - lpips
+    num_frames:
+    - 
+    - 
+    patch_wise: true
+
+tl_params:
+  base_model_path: VAE_Analysis/data/video_dataset/8K_basketball/trained_models/mE2_tE2_ds_40.pth
+  copy_model: true
+  epoch: 15
+  model_copy_path: 
+    VAE_Analysis/data/video_dataset/8K_park/TL_model_results/E2_model/E2_base_model.pth
+  is_model_pth: true
+  enc_unfreeze_perc: 1.0
+  dec_unfreeze_perc: 1.0
+  save_csv_path: 
+    VAE_Analysis/data/video_dataset/8K_park/TL_model_results/E2_model/logs/E2_enc_100_dec_100.csv
+  overwrite_prev_csv: true
+  save_model_path: VAE_Analysis/data/video_dataset/8K_park/TL_model_results/E2_model/models
+  save_model_name: E2_based_100 # Don't add .pt or .pth
+  save_model_as_pth: true
+  prev_best_loss: 0.05222
+
+stream_params:
+  latent_tensors_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/latents/latent_tensor_ds_40_train_120
+  is_top_down: true
+  save_folder_path: VAE_Analysis/data/video_dataset/8K_basketball/recon_video/latent_stream_40_e45
+  stream_video_name: E2_stream_40_e45_
+  stream_video_ext: .mp4
+  img_format: .png
+  stream_option: frame_pack # 'seperate' or 'merge' or 'alternate'
+  num_frames: # None means all frames
+  - 
+  - 
+  stream_sub_option: raw # residual or raw
+  overwrite_prev_video: true
+
+#patch_replace_12.py
+patch_replace_params:
+  input_frames_path: VAE_Analysis/data/video_dataset/8K_grass/patches/train_frames_patches_40
+  eval_json_path: VAE_Analysis/data/video_dataset/8K_basketball/logs/eval_ds_40_train_120.json
+  output_raw_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/reconstructed_frames/patch_replaced_40/patches_75
+  overwrite: true
+  percentile_value: 75
+  img_dim_H: 3840
+  img_dim_W: 7680
+  downsample_factor: 40
+  metric: lpips #,options : "ssim", "psnr", "lpips"
+  num_frames: #null means all frames
+  - 
+  - 10
+  input_true_frames_path: VAE_Analysis/data/video_dataset/8K_basketball/train_frames
+  input_pred_frames_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/reconstructed_frames/raw_frames_ds_40_train_120
+  output_frames_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/reconstructed_frames/patch_replaced_40/frames_75
+  output_video_path: 
+    VAE_Analysis/data/video_dataset/8K_basketball/recon_video/patches_replaced_40/video_75
+  output_video_name: E2_patch_replace_40_75
