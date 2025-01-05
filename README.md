@@ -50,17 +50,6 @@ Below is the visual comparison of client-side reconstructions. The H.265 encoded
 
 ![visual-result](img/visual-result.png)
 
-### Quantitative Metrics
-
-| **8K Scene**  | **H.264** | **H.265** | **Our Method** | **H.264** | **H.265** | **Our Method** |
-|----------------|-----------|-----------|----------------|-----------|-----------|----------------|
-|                |           |           |                | **Rate-Distortion Score** | **Rate-Distortion Score** | **Rate-Distortion Score** |
-| **Basketball** | 81.83     | 60.89     | **46.34**      | 0.505     | 0.209     | **0.210**      |
-| **Park**       | 256.3     | 239.99    | **84.75**      | 0.510     | 0.457     | **0.105**      |
-| **Football**   | 108.36    | 90.74     | **44.49**      | 0.509     | 0.372     | **0.054**      |
-| **Grass**      | 408.45    | 373.63    | **85.92**      | 0.515     | 0.451     | **0.055**      |
-| **Sunny**      | 67.84     | 53.15     | **48.25**      | 0.505     | 0.130     | **0.120**      |
-
 
 ## Citation
 
